@@ -3,18 +3,23 @@ const addBtn = document.querySelector(".add");
 const input = document.querySelector(".task-input");
 const list = document.querySelector(".list");
 let arrOfTasks = [];
-let i = 1;
+let i = 0;
 
 window.addEventListener("load" , function(e){
     if(this.localStorage.getItem("tasks")){
         arrOfTasks = JSON.parse(this.localStorage.getItem("tasks"));
-        addToBody(arrOfTasks);
+        if(arrOfTasks.length == 0){
+            list.innerHTML = "No Tasks Added Yet"
+        }
+        else{
+            addToBody(arrOfTasks);
+        }
     }
 })
 addBtn.addEventListener("click" , function(e){
     if(input.value != ""){
         let obj = {
-            id:i,
+            id : i,
             text:input.value,
         }
         arrOfTasks.push(obj);
@@ -50,12 +55,10 @@ function addToLocalStorage(arr){
 list.addEventListener("click" ,function(e){
     if(e.target.classList.contains("del")){
         e.target.parentElement.remove();
-        for(let j = 0 ; j < JSON.parse(localStorage.getItem("tasks")).length ; j++){
-            let arr =  JSON.parse(localStorage.getItem("tasks"));
-            if(j == e.target.parentElement.dataset.index){
-                arr.splice(e.target.parentElement.dataset.index , 1);
-                addToLocalStorage(arr);
-            }
+        arrOfTasks = arrOfTasks.filter((task) => task.id != e.target.parentElement.dataset.index);
+        addToLocalStorage(arrOfTasks);
+        if(list.innerHTML == ""){
+            list.innerHTML = "No Tasks Added Yet";
         }
     }
 })
